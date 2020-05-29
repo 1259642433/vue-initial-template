@@ -5,7 +5,7 @@ const IS_PROD = 'production'.includes(process.env.NODE_ENV)
 const SpritesmithPlugin = require('webpack-spritesmith')
 
 module.exports = {
-  publicPath: IS_PROD ? process.env.VUE_APP_PUBLIC_PATH : '/',
+  publicPath: '/',
   outputDir: process.env.outputDir || 'dist',
   assetsDir: 'assets',
   lintOnSave: false,
@@ -51,6 +51,23 @@ module.exports = {
       .set('@a', resolve('src/assets'))
       .set('@c', resolve('src/components'))
       .set('@v', resolve('src/views'))
+    if (IS_PROD) {
+      // 作用：压缩图片
+      // 测试：图片总大小14.2143736mb,
+      // 引入前项目打包后dist文件夹大小为14.3639479mb，引入后dist文件夹大小为4.5201283mb
+      // 压缩比达30%,图片资源大小减少了十分之七
+      config.module
+        .rule('images')
+        .use('image-webpack-loader')
+        .loader('image-webpack-loader')
+        .options({
+          mozjpeg: { progressive: true, quality: 65 },
+          optipng: { enabled: false },
+          pngquant: { quality: [0.65, 0.9], speed: 4 },
+          gifsicle: { interlaced: false }
+          // webp: { quality: 75 } 大大减少体积，但在ios存在兼容问题，不用
+        })
+    }
   },
   configureWebpack: (config) => {
     if (process.env.NODE_ENV === 'production') {
