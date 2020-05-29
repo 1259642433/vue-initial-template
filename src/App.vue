@@ -5,7 +5,7 @@
 </template>
 
 <style lang="scss">
-@import "./assets/css/reset.scss";
+@import '@a/scss/sprite.scss';
 #app{
   height: 100%;
 }

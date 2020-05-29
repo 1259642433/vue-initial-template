@@ -457,7 +457,12 @@ button,
 input { /* 1 */
   all: unset;
 }
-button{
+
+/**
+ * 修改button鼠标hover样式
+ */
+
+ button{
   text-align:center;
   &:hover{
     cursor: pointer;
