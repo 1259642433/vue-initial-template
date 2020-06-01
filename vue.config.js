@@ -78,17 +78,18 @@ module.exports = {
       // 生产环境配置...
       config.mode = 'production'
     } else if (process.env.NODE_ENV === 'debug') {
-      // 测试环境修改配置...
-      config.mode = 'debug'
-    } else {
       // 开发环境配置...
       config.mode = 'development'
     }
+    // else {
+    //   // 公用配置
+    //   config.mode = 'common'
+    // }
     config.resolve.modules = ['node_modules', './src/assets/img']
     const Plugins = [
       // 作用：将散落的小图icon之类的组合生成雪碧图，减少浏览器请求次数，加快页面加载速度
       // 使用方法：@import'@a/scss/sprite.scss'
-      // <span class="icon icon-每个小图的名字"></sapn>
+      // <div class="icon icon-每个小图的名字"></div>
       new SpritesmithPlugin({
         src: {
           cwd: resolve('./src/assets/img/icons'),
