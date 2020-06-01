@@ -4,6 +4,7 @@
     <p>process:{{process}}</p>
     <p>环境变量:{{env}}</p>
     <button>123</button>
+    <!-- <img v-for="i in 6" :key="i" :src="require('@a/img/demo/'+i+'.jpg')" :alt="'第'+i+'张测试图片'"> -->
   </div>
 </template>
 
@@ -32,12 +33,17 @@ export default {
     }
 
     button {
+      margin-bottom: 20px;
       padding: 0px 20px;
       height: 40px;
       line-height: 40px;
       color: white;
       background-color: rgb(21, 170, 230);
       border-radius:5px;
+    }
+
+    img{
+      width: 100%;
     }
   }
 

@@ -59,6 +59,7 @@ module.exports = {
       // 测试：图片总大小14.2143736mb,
       // 引入前项目打包后dist文件夹大小为14.3639479mb，引入后dist文件夹大小为4.5201283mb
       // 压缩比达30%,图片资源大小减少了十分之七
+      // PS:建议cnpm安装, npm因为墙的原因可能安装不上一些依赖
       config.module
         .rule('images')
         .use('image-webpack-loader')
@@ -150,7 +151,7 @@ module.exports = {
         algorithm: 'gzip',
         test: /\.js$|\.html$|\.css$/,
         threshold: 10240,
-        // deleteOriginalAssets: true, // 删除源文件
+        deleteOriginalAssets: true, // 删除源文件
         minRatio: 0.8
       })
     ]
