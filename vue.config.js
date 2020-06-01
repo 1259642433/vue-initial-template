@@ -4,13 +4,15 @@ const IS_PROD = 'production'.includes(process.env.NODE_ENV)
 
 const SpritesmithPlugin = require('webpack-spritesmith')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+// const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const CompressionWebpackPlugin = require('compression-webpack-plugin')
 
 module.exports = {
   publicPath: '/',
   outputDir: process.env.outputDir || 'dist',
   assetsDir: 'assets',
   lintOnSave: false,
-  productionSourceMap: false,
+  productionSourceMap: !IS_PROD,
   parallel: require('os').cpus().length > 1,
   pwa: {}, // PWA 插件
   pluginOptions: {}, // 第三方插件
@@ -38,7 +40,7 @@ module.exports = {
   },
   css: {
     extract: IS_PROD, // css分离,与HMR不兼容
-    sourceMap: false,
+    sourceMap: !IS_PROD,
     loaderOptions: {
       sass: {
         prependData: '@import "@a/scss/frame.scss";'
@@ -124,7 +126,33 @@ module.exports = {
           statsOptions: null,
           logLevel: 'info'
         }
-      )
+      ),
+      // TODO 打包失败原因分析并修复
+      // 打包优化
+      // new UglifyJsPlugin({
+      //   sourceMap: false,
+      //   // 开启多线程提高打包速度, 默认并发运行数：os.cpus().length - 1
+      //   parallel: true,
+      //   uglifyOptions: {
+      //     compress: {
+      //       // warnings: false,
+      //       drop_console: true,
+      //       drop_debugger: false,
+      //       pure_funcs: ['console.log'] // 生产环境自动删除console
+      //     },
+      //     warnings: false
+      //   }
+      // })
+      // TODO 服务器配置尚未完成
+      // 打包gzip压缩
+      new CompressionWebpackPlugin({
+        filename: '[path].gz[query]', // 旧版本为assets，现为filename
+        algorithm: 'gzip',
+        test: /\.js$|\.html$|\.css$/,
+        threshold: 10240,
+        // deleteOriginalAssets: true, // 删除源文件
+        minRatio: 0.8
+      })
     ]
     config.plugins = [...config.plugins, ...Plugins]
   }
