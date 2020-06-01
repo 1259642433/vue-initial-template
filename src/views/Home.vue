@@ -17,18 +17,28 @@ export default {
     }
   },
   created () {
+    // TODO TODO测试
     console.log('Hello!')
   }
 }
+
 </script>
 <style lang="scss" scoped>
-.home{
-  text-align: center;
-  .icon{
-    margin: 0 auto;
+  .home {
+    text-align: center;
+
+    .icon {
+      margin: 0 auto;
+    }
+
+    button {
+      padding: 0px 20px;
+      height: 40px;
+      line-height: 40px;
+      color: white;
+      background-color: rgb(21, 170, 230);
+      border-radius:5px;
+    }
   }
-  button{
-    width: 1000px;
-  }
-}
+
 </style>

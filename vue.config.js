@@ -3,6 +3,7 @@ const resolve = dir => path.join(__dirname, dir)
 const IS_PROD = 'production'.includes(process.env.NODE_ENV)
 
 const SpritesmithPlugin = require('webpack-spritesmith')
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 
 module.exports = {
   publicPath: '/',
@@ -87,7 +88,6 @@ module.exports = {
       // <span class="icon icon-每个小图的名字"></sapn>
       new SpritesmithPlugin({
         src: {
-          // 目标小图标，需要整合的小图片的老巢。
           cwd: resolve('./src/assets/img/icons'),
           glob: '*.png'
         },
@@ -109,7 +109,22 @@ module.exports = {
         spritesmithOptions: {
           padding: 20
         }
-      })
+      }),
+      // 打包分析
+      new BundleAnalyzerPlugin(
+        {
+          analyzerMode: 'server',
+          analyzerHost: 'localhost',
+          analyzerPort: 10000,
+          reportFilename: 'report.html',
+          defaultSizes: 'parsed',
+          openAnalyzer: false,
+          generateStatsFile: false,
+          statsFilename: 'stats.json',
+          statsOptions: null,
+          logLevel: 'info'
+        }
+      )
     ]
     config.plugins = [...config.plugins, ...Plugins]
   }
