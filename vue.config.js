@@ -149,9 +149,9 @@ module.exports = {
       new CompressionWebpackPlugin({
         filename: '[path].gz[query]', // 旧版本为assets，现为filename
         algorithm: 'gzip',
-        test: /\.js$|\.html$|\.css$/,
+        test: /\.js$|\.css$/,
         threshold: 10240,
-        deleteOriginalAssets: true, // 删除源文件
+        // deleteOriginalAssets: true, // 删除源文件
         minRatio: 0.8
       })
     ]
