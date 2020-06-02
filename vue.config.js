@@ -4,7 +4,7 @@ const IS_PROD = 'production'.includes(process.env.NODE_ENV)
 
 const SpritesmithPlugin = require('webpack-spritesmith')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
-// const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const CompressionWebpackPlugin = require('compression-webpack-plugin')
 
 module.exports = {
@@ -77,85 +77,94 @@ module.exports = {
     if (process.env.NODE_ENV === 'production') {
       // 生产环境配置...
       config.mode = 'production'
-    } else if (process.env.NODE_ENV === 'debug') {
-      // 测试环境修改配置...
-      config.mode = 'debug'
-    } else {
-      // 开发环境配置...
-      config.mode = 'development'
-    }
-    config.resolve.modules = ['node_modules', './src/assets/img']
-    const Plugins = [
+      // 去除console.log
+      console.log(config.optimization.minimizer)
+      // config.optimization.minimizer[0].terserOptions = {
+      //   compress: {
+      //     drop_console: true
+      //   }
+      // }
+      config.resolve.modules = ['node_modules', './src/assets/img']
+      const Plugins = [
       // 作用：将散落的小图icon之类的组合生成雪碧图，减少浏览器请求次数，加快页面加载速度
       // 使用方法：@import'@a/scss/sprite.scss'
       // <span class="icon icon-每个小图的名字"></sapn>
-      new SpritesmithPlugin({
-        src: {
-          cwd: resolve('./src/assets/img/icons'),
-          glob: '*.png'
-        },
-        target: {
-          image: resolve('./src/assets/img/sprite.png'),
-          css: [
-            [resolve('./src/assets/scss/sprite.scss'), {
+        new SpritesmithPlugin({
+          src: {
+            cwd: resolve('./src/assets/img/icons'),
+            glob: '*.png'
+          },
+          target: {
+            image: resolve('./src/assets/img/sprite.png'),
+            css: [
+              [resolve('./src/assets/scss/sprite.scss'), {
               // 引用自己的模板
-              format: 'function_based_template'
-            }]
-          ]
-        },
-        customTemplates: {
-          function_based_template: templateFunction
-        },
-        apiOptions: {
-          cssImageRef: '~sprite.png'
-        },
-        spritesmithOptions: {
-          padding: 20
+                format: 'function_based_template'
+              }]
+            ]
+          },
+          customTemplates: {
+            function_based_template: templateFunction
+          },
+          apiOptions: {
+            cssImageRef: '~sprite.png'
+          },
+          spritesmithOptions: {
+            padding: 20
+          }
+        }),
+        // 打包分析
+        new BundleAnalyzerPlugin(
+          {
+            analyzerMode: 'server',
+            analyzerHost: 'localhost',
+            analyzerPort: 10000,
+            reportFilename: 'report.html',
+            defaultSizes: 'parsed',
+            openAnalyzer: false,
+            generateStatsFile: false,
+            statsFilename: 'stats.json',
+            statsOptions: null,
+            logLevel: 'info'
+          }
+        ),
+        // TODO 打包失败原因分析并修复
+        // 打包优化
+
+        // TODO 服务器配置尚未完成
+        // complete
+        // 打包gzip压缩
+        new CompressionWebpackPlugin({
+          filename: '[path].gz[query]', // 旧版本为assets，现为filename
+          algorithm: 'gzip',
+          test: /\.js$|\.css$|\.jpg$/,
+          threshold: 10240,
+          // deleteOriginalAssets: true, // 删除源文件
+          minRatio: 0.8
+        })
+      ]
+      config.optimization.minimizer.push(new UglifyJsPlugin({
+        sourceMap: false,
+        // 开启多线程提高打包速度, 默认并发运行数：os.cpus().length - 1
+        parallel: true,
+        uglifyOptions: {
+          compress: {
+            // warnings: false,
+            drop_console: true,
+            // drop_debugger: false,
+            pure_funcs: ['console.log'] // 生产环境自动删除console
+          },
+          warnings: false
         }
-      }),
-      // 打包分析
-      new BundleAnalyzerPlugin(
-        {
-          analyzerMode: 'server',
-          analyzerHost: 'localhost',
-          analyzerPort: 10000,
-          reportFilename: 'report.html',
-          defaultSizes: 'parsed',
-          openAnalyzer: false,
-          generateStatsFile: false,
-          statsFilename: 'stats.json',
-          statsOptions: null,
-          logLevel: 'info'
-        }
-      ),
-      // TODO 打包失败原因分析并修复
-      // 打包优化
-      // new UglifyJsPlugin({
-      //   sourceMap: false,
-      //   // 开启多线程提高打包速度, 默认并发运行数：os.cpus().length - 1
-      //   parallel: true,
-      //   uglifyOptions: {
-      //     compress: {
-      //       // warnings: false,
-      //       drop_console: true,
-      //       drop_debugger: false,
-      //       pure_funcs: ['console.log'] // 生产环境自动删除console
-      //     },
-      //     warnings: false
-      //   }
-      // })
-      // TODO 服务器配置尚未完成
-      // 打包gzip压缩
-      new CompressionWebpackPlugin({
-        filename: '[path].gz[query]', // 旧版本为assets，现为filename
-        algorithm: 'gzip',
-        test: /\.js$|\.css$/,
-        threshold: 10240,
-        // deleteOriginalAssets: true, // 删除源文件
-        minRatio: 0.8
-      })
-    ]
-    config.plugins = [...config.plugins, ...Plugins]
+      }))
+      config.plugins = [...config.plugins, ...Plugins]
+    } else if (process.env.NODE_ENV === 'development') {
+      // 开发环境配置...
+      config.mode = 'development'
+    } else {
+      // 其他...
+      config.mode = 'none'
+    }
   }
 }
 
