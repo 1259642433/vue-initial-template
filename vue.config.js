@@ -76,19 +76,62 @@ module.exports = {
   configureWebpack: (config) => {
     if (process.env.NODE_ENV === 'production') {
       // 生产环境配置...
+      console.log(config.optimization)
       config.mode = 'production'
+      // confuse 内置terser插件？修改为何不生效？
+      // console.log(config.optimization.minimizer)
       // 去除console.log
-      console.log(config.optimization.minimizer)
       // config.optimization.minimizer[0].terserOptions = {
       //   compress: {
-      //     drop_console: true
+      //     drop_console: true,
+      //     pure_funcs: ['console.log']
       //   }
       // }
+      // TODO 等待后续测试是否生效
+      // 配置splitChunks(webpack4内置), 将公用组件，样式等等提取出来,减少打包体积
+      config.optimization.splitChunks = {
+        cacheGroups: {
+          common: {
+            name: 'common',
+            chunks: 'initial',
+            minChunks: 2,
+            maxInitialRequests: 5,
+            minSize: 0,
+            priority: 1,
+            reuseExistingChunk: true,
+            enforce: true
+          },
+          vendors: {
+            name: 'vendors',
+            test: /[\\/]node_modules[\\/]/,
+            chunks: 'initial',
+            priority: 2,
+            reuseExistingChunk: true,
+            enforce: true
+          },
+          elementUI: {
+            name: 'elementui',
+            test: /[\\/]node_modules[\\/]element-ui[\\/]/,
+            chunks: 'all',
+            priority: 3,
+            reuseExistingChunk: true,
+            enforce: true
+          },
+          echarts: {
+            name: 'chunk-echarts',
+            test: /[\\/]node_modules[\\/](vue-)?echarts[\\/]/,
+            chunks: 'all',
+            priority: 4,
+            reuseExistingChunk: true,
+            enforce: true
+          }
+        }
+      }
       config.resolve.modules = ['node_modules', './src/assets/img']
       const Plugins = [
       // 作用：将散落的小图icon之类的组合生成雪碧图，减少浏览器请求次数，加快页面加载速度
       // 使用方法：@import'@a/scss/sprite.scss'
-      // <span class="icon icon-每个小图的名字"></sapn>
+      // <div class="icon icon-每个小图的名字"></div>
         new SpritesmithPlugin({
           src: {
             cwd: resolve('./src/assets/img/icons'),
@@ -128,11 +171,6 @@ module.exports = {
             logLevel: 'info'
           }
         ),
-        // TODO 打包失败原因分析并修复
-        // 打包优化
-
-        // TODO 服务器配置尚未完成
-        // complete
         // 打包gzip压缩
         new CompressionWebpackPlugin({
           filename: '[path].gz[query]', // 旧版本为assets，现为filename
@@ -143,15 +181,15 @@ module.exports = {
           minRatio: 0.8
         })
       ]
+      // 打包优化，去除console.log
       config.optimization.minimizer.push(new UglifyJsPlugin({
         sourceMap: false,
         // 开启多线程提高打包速度, 默认并发运行数：os.cpus().length - 1
         parallel: true,
         uglifyOptions: {
           compress: {
-            // warnings: false,
             drop_console: true,
-            // drop_debugger: false,
+            drop_debugger: false,
             pure_funcs: ['console.log'] // 生产环境自动删除console
           },
           warnings: false
