@@ -4,6 +4,7 @@
     <p>process:{{process}}</p>
     <p>环境变量:{{env}}</p>
     <button>123</button>
+    <br>
     <img v-for="i in 6" :key="i" :src="require('@a/img/demo/'+i+'.jpg')" :alt="'第'+i+'张测试图片'">
   </div>
 </template>
@@ -18,7 +19,6 @@ export default {
     }
   },
   created () {
-    // TODO TODO测试
     console.log('Hello!')
   }
 }
@@ -43,7 +43,8 @@ export default {
     }
 
     img{
-      width: 100%;
+      display: inline-block;
+      width: $variableTest;
     }
   }
 
