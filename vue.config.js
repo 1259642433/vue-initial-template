@@ -6,6 +6,7 @@ const SpritesmithPlugin = require('webpack-spritesmith')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const CompressionWebpackPlugin = require('compression-webpack-plugin')
+const StylelintPlugin = require('stylelint-webpack-plugin')
 
 module.exports = {
   publicPath: '/',
@@ -179,6 +180,11 @@ module.exports = {
           threshold: 10240,
           // deleteOriginalAssets: true, // 删除源文件
           minRatio: 0.8
+        }),
+        // 样式规范验证
+        new StylelintPlugin({
+          files: ['src/**/*.vue', 'src/assets/scss/*.scss'],
+          fix: true // 打开自动修复（谨慎使用！注意上面的配置不要加入js或html文件，会发生问题，js文件请手动修复）
         })
       ]
       // 打包优化，去除console.log
