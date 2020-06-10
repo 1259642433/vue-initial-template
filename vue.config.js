@@ -6,7 +6,7 @@ const SpritesmithPlugin = require('webpack-spritesmith')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const CompressionWebpackPlugin = require('compression-webpack-plugin')
-const StylelintPlugin = require('stylelint-webpack-plugin')
+// const StylelintPlugin = require('stylelint-webpack-plugin')
 
 module.exports = {
   publicPath: '/',
@@ -75,6 +75,7 @@ module.exports = {
     }
   },
   configureWebpack: (config) => {
+    config.resolve.modules = ['node_modules', './src/assets/img']
     if (process.env.NODE_ENV === 'production') {
       // 生产环境配置...
       console.log(config.optimization)
@@ -82,12 +83,12 @@ module.exports = {
       // confuse 内置terser插件？修改为何不生效？
       // console.log(config.optimization.minimizer)
       // 去除console.log
-      // config.optimization.minimizer[0].terserOptions = {
-      //   compress: {
-      //     drop_console: true,
-      //     pure_funcs: ['console.log']
-      //   }
-      // }
+      config.optimization.minimizer[0].terserOptions = {
+        compress: {
+          drop_console: true,
+          pure_funcs: ['console.log']
+        }
+      }
       // TODO 等待后续测试是否生效
       // 配置splitChunks(webpack4内置), 将公用组件，样式等等提取出来,减少打包体积
       config.optimization.splitChunks = {
@@ -128,7 +129,6 @@ module.exports = {
           }
         }
       }
-      config.resolve.modules = ['node_modules', './src/assets/img']
       const Plugins = [
       // 作用：将散落的小图icon之类的组合生成雪碧图，减少浏览器请求次数，加快页面加载速度
       // 使用方法：@import'@a/scss/sprite.scss'
@@ -180,12 +180,15 @@ module.exports = {
           threshold: 10240,
           // deleteOriginalAssets: true, // 删除源文件
           minRatio: 0.8
-        }),
-        // 样式规范验证
-        new StylelintPlugin({
-          files: ['src/**/*.vue', 'src/assets/scss/*.scss'],
-          fix: true // 打开自动修复（谨慎使用！注意上面的配置不要加入js或html文件，会发生问题，js文件请手动修复）
         })
+        // 样式规范验证
+        // new StylelintPlugin({
+        //   files: ['src/**/*.vue', 'src/assets/scss/*.scss'],
+        //   fix: true, // 打开自动修复（谨慎使用！注意上面的配置不要加入js或html文件，会发生问题，js文件请手动修复）
+        //   cache: true,
+        //   emitErrors: true,
+        //   failOnError: false
+        // })
       ]
       // 打包优化，去除console.log
       config.optimization.minimizer.push(new UglifyJsPlugin({

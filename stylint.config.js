@@ -1,5 +1,5 @@
 module.exports = {
-  ignoreFiles: ['**/*.js', 'src/assets/css/element-variables.scss', 'theme/'],
+  ignoreFiles: ['src/assets/scss/sprite.scss'],
   extends: ['stylelint-config-standard', 'stylelint-config-prettier'],
   rules: {
     'no-empty-source': null,

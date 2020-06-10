@@ -8,7 +8,8 @@
     "build:debug": "vue-cli-service build --mode debug",
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "lint:css": "stylelint **/*.{css,sass,scss} --syntax scss"
   },
   "dependencies": {
     "core-js": "^3.6.5",
@@ -40,6 +41,7 @@
     "stylelint": "^13.6.0",
     "stylelint-config-prettier": "^8.0.1",
     "stylelint-config-standard": "^20.0.0",
+    "stylelint-scss": "^3.17.2",
     "stylelint-webpack-plugin": "^2.0.0",
     "uglifyjs-webpack-plugin": "^2.2.0",
     "vue-template-compiler": "^2.6.11",
