@@ -57,9 +57,9 @@ module.exports = {
       .set('@v', resolve('src/views'))
     if (IS_PROD) {
       // 作用：压缩图片
-      // 测试：图片总大小14.2143736mb,
-      // 引入前项目打包后dist文件夹大小为14.3639479mb，引入后dist文件夹大小为4.5201283mb
-      // 压缩比达30%,图片资源大小减少了十分之七
+      // 测试：图片总大小13.9mb,
+      // 引入前项目打包后img文件夹大小为13.9mb，引入后img文件夹大小为4.62mb
+      // 压缩比达33%,图片资源大小减少了三分之二
       // PS:建议cnpm安装, npm因为墙的原因可能安装不上一些依赖
       config.module
         .rule('images')
@@ -75,20 +75,18 @@ module.exports = {
     }
   },
   configureWebpack: (config) => {
-    config.resolve.modules = ['node_modules', './src/assets/img']
     if (process.env.NODE_ENV === 'production') {
       // 生产环境配置...
-      console.log(config.optimization)
       config.mode = 'production'
       // confuse 内置terser插件？修改为何不生效？
       // console.log(config.optimization.minimizer)
       // 去除console.log
-      config.optimization.minimizer[0].terserOptions = {
-        compress: {
-          drop_console: true,
-          pure_funcs: ['console.log']
-        }
-      }
+      // config.optimization.minimizer[0].terserOptions = {
+      //   compress: {
+      //     drop_console: true,
+      //     pure_funcs: ['console.log']
+      //   }
+      // }
       // TODO 等待后续测试是否生效
       // 配置splitChunks(webpack4内置), 将公用组件，样式等等提取出来,减少打包体积
       config.optimization.splitChunks = {
@@ -130,33 +128,6 @@ module.exports = {
         }
       }
       const Plugins = [
-      // 作用：将散落的小图icon之类的组合生成雪碧图，减少浏览器请求次数，加快页面加载速度
-      // 使用方法：@import'@a/scss/sprite.scss'
-      // <div class="icon icon-每个小图的名字"></div>
-        new SpritesmithPlugin({
-          src: {
-            cwd: resolve('./src/assets/img/icons'),
-            glob: '*.png'
-          },
-          target: {
-            image: resolve('./src/assets/img/sprite.png'),
-            css: [
-              [resolve('./src/assets/scss/sprite.scss'), {
-              // 引用自己的模板
-                format: 'function_based_template'
-              }]
-            ]
-          },
-          customTemplates: {
-            function_based_template: templateFunction
-          },
-          apiOptions: {
-            cssImageRef: '~sprite.png'
-          },
-          spritesmithOptions: {
-            padding: 20
-          }
-        }),
         // 打包分析
         new BundleAnalyzerPlugin(
           {
@@ -212,6 +183,34 @@ module.exports = {
       // 其他...
       config.mode = 'none'
     }
+    // 作用：将散落的小图icon之类的组合生成雪碧图，减少浏览器请求次数，加快页面加载速度
+    // 使用方法：@import'@a/scss/sprite.scss'
+    // <div class="icon icon-每个小图的名字"></div>
+    config.resolve.modules = ['node_modules', './src/assets/img']
+    config.plugins = [...config.plugins, new SpritesmithPlugin({
+      src: {
+        cwd: resolve('./src/assets/img/icons'),
+        glob: '*.png'
+      },
+      target: {
+        image: resolve('./src/assets/img/sprite.png'),
+        css: [
+          [resolve('./src/assets/scss/sprite.scss'), {
+          // 引用自己的模板
+            format: 'function_based_template'
+          }]
+        ]
+      },
+      customTemplates: {
+        function_based_template: templateFunction
+      },
+      apiOptions: {
+        cssImageRef: '~sprite.png'
+      },
+      spritesmithOptions: {
+        padding: 20
+      }
+    })]
   }
 }
 
