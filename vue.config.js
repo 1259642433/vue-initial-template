@@ -78,15 +78,10 @@ module.exports = {
     if (process.env.NODE_ENV === 'production') {
       // 生产环境配置...
       config.mode = 'production'
-      // confuse 内置terser插件？修改为何不生效？
-      // console.log(config.optimization.minimizer)
-      // 去除console.log
-      // config.optimization.minimizer[0].terserOptions = {
-      //   compress: {
-      //     drop_console: true,
-      //     pure_funcs: ['console.log']
-      //   }
-      // }
+      // 打包优化，去除console.log
+      // vuecli4默认引入依赖terser插件，直接添加属性即可
+      config.optimization.minimizer[0].options.terserOptions.compress.drop_console = true
+      config.optimization.minimizer[0].options.terserOptions.compress.pure_funcs = ['console.log']
       // TODO 等待后续测试是否生效
       // 配置splitChunks(webpack4内置), 将公用组件，样式等等提取出来,减少打包体积
       config.optimization.splitChunks = {
@@ -161,20 +156,6 @@ module.exports = {
         //   failOnError: false
         // })
       ]
-      // 打包优化，去除console.log
-      config.optimization.minimizer.push(new UglifyJsPlugin({
-        sourceMap: false,
-        // 开启多线程提高打包速度, 默认并发运行数：os.cpus().length - 1
-        parallel: true,
-        uglifyOptions: {
-          compress: {
-            drop_console: true,
-            drop_debugger: false,
-            pure_funcs: ['console.log'] // 生产环境自动删除console
-          },
-          warnings: false
-        }
-      }))
       config.plugins = [...config.plugins, ...Plugins]
     } else if (process.env.NODE_ENV === 'development') {
       // 开发环境配置...
