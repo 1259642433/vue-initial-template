@@ -4,7 +4,6 @@ const IS_PROD = 'production'.includes(process.env.NODE_ENV)
 
 const SpritesmithPlugin = require('webpack-spritesmith')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const CompressionWebpackPlugin = require('compression-webpack-plugin')
 // const StylelintPlugin = require('stylelint-webpack-plugin')
 
@@ -75,11 +74,11 @@ module.exports = {
     }
   },
   configureWebpack: (config) => {
-    if (process.env.NODE_ENV === 'production') {
+    if (IS_PROD) {
       // 生产环境配置...
       config.mode = 'production'
       // 打包优化，去除console.log
-      // vuecli4默认引入依赖terser插件，直接添加属性即可
+      // vuecli4默认引入依赖terser插件，在这个基础上直接添加属性即可
       config.optimization.minimizer[0].options.terserOptions.compress.drop_console = true
       config.optimization.minimizer[0].options.terserOptions.compress.pure_funcs = ['console.log']
       // TODO 等待后续测试是否生效
