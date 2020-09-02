@@ -6,6 +6,7 @@ const SpritesmithPlugin = require('webpack-spritesmith')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 const CompressionWebpackPlugin = require('compression-webpack-plugin')
 // const StylelintPlugin = require('stylelint-webpack-plugin')
+const zopfli = require('@gfx/zopfli')
 
 module.exports = {
   publicPath: '/',
@@ -138,12 +139,33 @@ module.exports = {
           }
         ),
         // 打包gzip压缩
+        // new CompressionWebpackPlugin({
+        //   filename: '[path].gz',
+        //   algorithm: 'gzip',
+        //   test: /\.js$|\.css$|\.html$/,
+        //   threshold: 10240,
+        //   minRatio: 0.8
+        // })
+        // 打包zopfli压缩
         new CompressionWebpackPlugin({
           filename: '[path].gz[query]', // 旧版本为assets，现为filename
-          algorithm: 'gzip',
           test: /\.js$|\.css$|\.jpg$/,
           threshold: 10240,
           // deleteOriginalAssets: true, // 删除源文件
+          minRatio: 0.8,
+          algorithm (input, compressionOptions, callback) {
+            return zopfli.gzip(input, compressionOptions, callback)
+          }
+        }),
+        // 打包brotli压缩
+        new CompressionWebpackPlugin({
+          filename: '[path].br',
+          algorithm: 'brotliCompress',
+          test: /\.(js|css|html|svg)$/,
+          compressionOptions: {
+            level: 11
+          },
+          threshold: 10240,
           minRatio: 0.8
         })
         // 样式规范验证
