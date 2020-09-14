@@ -20,32 +20,39 @@ export default {
   },
   created () {
     console.log('Hello!')
+    // this.testApi()
+  },
+  methods:{
+    testApi(){
+      this.$api.test.testGet().then(res=>{
+        console.log('响应数据:'+res)
+      })
+    }
   }
 }
-
 </script>
 <style lang="scss" scoped>
-  .home {
-    text-align: center;
+    .home {
+        text-align: center;
 
-    .icon {
-      margin: 0 auto;
-    }
+        .icon {
+            margin: 0 auto;
+        }
 
-    button {
-      margin-bottom: 20px;
-      padding: 0px 20px;
-      height: 40px;
-      line-height: 40px;
-      color: white;
-      background-color: rgb(21, 170, 230);
-      border-radius:5px;
-    }
+        button {
+            margin-bottom: 20px;
+            padding: 0 20px;
+            height: 40px;
+            line-height: 40px;
+            color: white;
+            background-color: rgb(21, 170, 230);
+            border-radius:5px;
+        }
 
-    img{
-      display: inline-block;
-      width: $variableTest;
+        img{
+            display: inline-block;
+            width: $variableTest;
+        }
     }
-  }
 
 </style>

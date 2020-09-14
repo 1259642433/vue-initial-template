@@ -40,7 +40,7 @@ module.exports = {
     }
   },
   css: {
-    extract: IS_PROD, // css分离,与HMR不兼容
+    extract: IS_PROD, // css分离,不支持HMR
     sourceMap: !IS_PROD,
     loaderOptions: {
       sass: {
@@ -169,13 +169,6 @@ module.exports = {
           minRatio: 0.8
         })
         // 样式规范验证
-        // new StylelintPlugin({
-        //   files: ['src/**/*.vue', 'src/assets/scss/*.scss'],
-        //   fix: true, // 打开自动修复（谨慎使用！注意上面的配置不要加入js或html文件，会发生问题，js文件请手动修复）
-        //   cache: true,
-        //   emitErrors: true,
-        //   failOnError: false
-        // })
       ]
       config.plugins = [...config.plugins, ...Plugins]
     } else if (process.env.NODE_ENV === 'development') {
@@ -212,7 +205,16 @@ module.exports = {
       spritesmithOptions: {
         padding: 20
       }
-    })]
+    }), 
+    // 
+    // new StylelintPlugin({
+    //   files: ['src/**/*.vue', 'src/assets/scss/*.scss'],
+    //   fix: true, // 打开自动修复（谨慎使用！注意上面的配置不要加入js或html文件，会发生问题，js文件请手动修复）
+    //   cache: true,
+    //   emitErrors: true,
+    //   failOnError: false
+    // })
+  ]
   }
 }
 

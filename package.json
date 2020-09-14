@@ -12,6 +12,7 @@
     "lint:css": "stylelint **/*.{css,sass,scss} --syntax scss"
   },
   "dependencies": {
+    "axios": "^0.20.0",
     "core-js": "^3.6.5",
     "vue": "^2.6.11",
     "vue-router": "^3.3.2",
@@ -44,7 +45,6 @@
     "stylelint-config-standard": "^20.0.0",
     "stylelint-scss": "^3.17.2",
     "stylelint-webpack-plugin": "^2.0.0",
-    "uglifyjs-webpack-plugin": "^2.2.0",
     "vue-template-compiler": "^2.6.11",
     "webpack-bundle-analyzer": "^3.8.0",
     "webpack-spritesmith": "^1.1.0"
