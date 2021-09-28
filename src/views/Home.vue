@@ -1,36 +1,20 @@
 <template>
   <div class="home">
     <div class="icon icon-logo"></div>
-    <p>process:{{process}}</p>
+    <p>process:{{processC}}</p>
     <p>环境变量:{{env}}</p>
     <button>123</button>
     <br>
     <img v-for="i in 6" :key="i" :src="require('@a/img/demo/'+i+'.jpg')" :alt="'第'+i+'张测试图片'">
   </div>
 </template>
+<script setup>
+const processC = process
+const env = process.env
+console.log(processC)
 
-<script>
-export default {
-  name: 'Home',
-  data () {
-    return {
-      env: process.env,
-      process: process
-    }
-  },
-  created () {
-    console.log('Hello!')
-    // this.testApi()
-  },
-  methods:{
-    testApi(){
-      this.$api.test.testGet().then(res=>{
-        console.log('响应数据:'+res)
-      })
-    }
-  }
-}
 </script>
+
 <style lang="scss" scoped>
     .home {
         text-align: center;

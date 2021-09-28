@@ -124,8 +124,7 @@ module.exports = {
       }
       const Plugins = [
         // 打包分析
-        new BundleAnalyzerPlugin(
-          {
+        new BundleAnalyzerPlugin({
             analyzerMode: 'server',
             analyzerHost: 'localhost',
             analyzerPort: 10000,
@@ -157,7 +156,7 @@ module.exports = {
             return zopfli.gzip(input, compressionOptions, callback)
           }
         }),
-        // 打包brotli压缩
+        // // 打包brotli压缩
         new CompressionWebpackPlugin({
           filename: '[path].br',
           algorithm: 'brotliCompress',
